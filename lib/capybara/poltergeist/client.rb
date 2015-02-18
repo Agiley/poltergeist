@@ -29,16 +29,17 @@ module Capybara::Poltergeist
       end
     end
 
-    attr_reader :pid, :server, :path, :window_size, :phantomjs_options
+    attr_reader :pid, :server, :path, :window_size, :phantomjs_options, :phantomjs_env_vars
 
     def initialize(server, options = {})
-      @server            = server
-      @path              = Cliver::detect!((options[:path] || PHANTOMJS_NAME),
+      @server             = server
+      @path               = Cliver::detect!((options[:path] || PHANTOMJS_NAME),
                                            *PHANTOMJS_VERSION)
 
-      @window_size       = options[:window_size]       || [1024, 768]
-      @phantomjs_options = options[:phantomjs_options] || []
-      @phantomjs_logger  = options[:phantomjs_logger]  || $stdout
+      @window_size        = options[:window_size]        || [1024, 768]
+      @phantomjs_options  = options[:phantomjs_options]  || []
+      @phantomjs_logger   = options[:phantomjs_logger]   || $stdout
+      @phantomjs_env_vars = options[:phantomjs_env_vars] || {}
 
       pid = Process.pid
       at_exit do
@@ -62,7 +63,7 @@ module Capybara::Poltergeist
       process_options[:pgroup] = true unless Capybara::Poltergeist.windows?
 
       redirect_stdout do
-        @pid = Process.spawn(*command.map(&:to_s), process_options)
+        @pid = Process.spawn(@phantomjs_env_vars, *command.map(&:to_s), process_options)
         ObjectSpace.define_finalizer(self, self.class.process_killer(@pid))
       end
     end

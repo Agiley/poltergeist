@@ -40,10 +40,11 @@ module Capybara::Poltergeist
 
     def client
       @client ||= Client.start(server,
-        :path              => options[:phantomjs],
-        :window_size       => options[:window_size],
-        :phantomjs_options => phantomjs_options,
-        :phantomjs_logger  => phantomjs_logger
+        :path               => options[:phantomjs],
+        :window_size        => options[:window_size],
+        :phantomjs_options  => phantomjs_options,
+        :phantomjs_logger   => phantomjs_logger,
+        :phantomjs_env_vars => options[:phantomjs_env_vars]
       )
     end
 
